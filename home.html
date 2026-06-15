@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="home.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+</head>
+<body>
+    <h2>Encrypt Image</h2>
+<input type="file" id="imageUpload" accept="image/*">
+<button onclick="encryptImage()">Encrypt Image</button>
+<p id="encryptedOutput"></p>
+
+<h2>Decrypt Image</h2>
+<input type="text" id="decryptKey" placeholder="Enter decryption key">
+<button onclick="decryptImage()">Decrypt Image</button>
+<div id="decryptedImage"></div>
+  <div class="dashboard">
+    <h1>Welcome, Admin!</h1>
+
+    <!-- AES Image Encryption -->
+    <h2>Encrypt Image</h2>
+    <input type="file" id="imageUpload" accept="image/*">
+    <button onclick="encryptImage()">Encrypt Image</button>
+
+    <!-- OCR + AES Decryption -->
+    <h2>Decrypt Text from Image</h2>
+    <button onclick="processImage()">Decrypt Image</button>
+    <div id="output"></div>
+
+    <!-- Steganography + Crypto -->
+    <h2>Hide Encrypted Message in Image</h2>
+    <input type="file" id="imageInput" accept="image/*">
+    <input type="text" id="secretMessage" placeholder="Enter secret message">
+    <input type="text" id="encryptionKey" placeholder="Enter encryption key">
+    <button onclick="hideEncryptedMessage()">Hide & Download</button>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <h2>Extract & Decrypt Message</h2>
+    <input type="file" id="imageToExtract" accept="image/*">
+    <input type="text" id="decryptionKey" placeholder="Enter decryption key">
+    <button onclick="extractEncryptedMessage()">Extract & Decrypt</button>
+    <p id="extractedMessage"></p>
+
+    <button onclick="logout()">Logout</button>
+  </div>
+  <script src="home.js"></script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Extract & Decrypt - Secure Image</title>
+  <style>
+    /* --- Global Reset & Dark Theme --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #121212; /* Very dark grey (almost black) */
+      color: #e0e0e0; /* Light grey text */
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- Navbar --- */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      background-color: #1e1e1e; /* Slightly lighter dark shade */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      width: 100%;
+    }
+
+    .navbar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #007bff; /* Accent color */
+      text-decoration: none;
+    }
+
+    .nav-btn {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: transparent;
+      color: #007bff;
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      background-color: #007bff;
+      color: #ffffff;
+    }
+
+    /* --- Main Content Container --- */
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      flex-grow: 1;
+      width: 100%;
+    }
+
+    .extract-card {
+      background-color: #1e1e1e; /* Card background */
+      border-radius: 8px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .extract-card h2 {
+      text-align: center;
+      color: #007bff;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+    }
+
+    /* --- Form Inputs & Button --- */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      color: #b0b0b0;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      background-color: #2a2a2a;
+      border: 1px solid #444;
+      border-radius: 5px;
+      color: #e0e0e0;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-input::placeholder {
+      color: #777;
+    }
+    
+    /* Style file input */
+    .form-input[type="file"] {
+      padding: 0.6rem 1rem;
+      color: #999;
+    }
+    
+    .form-input[type="file"]::file-selector-button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .form-input[type="file"]::file-selector-button:hover {
+      background-color: #0056b3;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: bold;
+      /* Green color for "Extract" */
+      background-color: #28a745; 
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, opacity 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .action-btn:hover {
+      background-color: #218838;
+    }
+    
+    .action-btn:disabled {
+      background-color: #555;
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    /* --- Output Container --- */
+    #outputContainer {
+      margin-top: 2rem;
+      background: #2a2a2a;
+      padding: 1.5rem;
+      border-radius: 5px;
+      border: 1px solid #444;
+      word-wrap: break-word;
+      display: none; /* Hidden by default */
+    }
+
+    #outputContainer h3 {
+      color: #e0e0e0;
+      margin-bottom: 0.75rem;
+    }
+
+    #outputContainer p {
+      color: #b0b0b0;
+      font-family: monospace;
+      white-space: pre-wrap; /* Preserves whitespace */
+    }
+
+    /* --- Footer --- */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background-color: #1e1e1e;
+      color: #888;
+      font-size: 0.9rem;
+      width: 100%;
+    }
+
+    /* --- Custom Alert --- */
+    .custom-alert-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none; /* Hidden by default */
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .custom-alert-box {
+      background: #1e1e1e;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .custom-alert-box p {
+      color: #e0e0e0;
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .custom-alert-btn {
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .custom-alert-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- --- Navbar --- -->
+  <nav class="navbar">
+    <a href="dashboard.html" class="logo">🔐 Secure Image</a>
+    <a href="dashboard.html" class="nav-btn">Back to Dashboard</a>
+  </nav>
+
+  <!-- --- Main Content --- -->
+  <div class="container">
+    <div class="extract-card">
+      <h2>🕵️ Extract & Decrypt Data</h2>
+
+      <div class="form-group">
+        <label for="imageToExtract">Upload Stego Image</label>
+        <input type="file" id="imageToExtract" class="form-input" accept="image/*">
+      </div>
+
+      <div class="form-group">
+        <label for="decryptionKey">Secret Key (optional)</label>
+        <input type="text" id="decryptionKey" class="form-input" placeholder="Enter secret key if data is encrypted">
+      </div>
+      
+      <canvas id="canvas" style="display:none;"></canvas>
+      <button onclick="extractHiddenData()" class="action-btn">Extract & Decrypt</button>
+
+      <div id="outputContainer">
+        <h3>Decrypted Message:</h3>
+        <p id="outputText"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- --- Footer --- -->
+  <footer>
+    <p>&copy; 2025 Secure Image. All rights reserved.</p>
+  </footer>
+
+  <!-- --- Custom Alert Box --- -->
+  <div class="custom-alert-overlay" id="customAlertOverlay">
+    <div class="custom-alert-box">
+      <p id="customAlertMessage"></p>
+      <button class="custom-alert-btn" onclick="closeCustomAlert()">OK</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+  <!-- 
+    This is the exact script you provided, with alert() 
+    calls replaced by showCustomAlert() and button 
+    loading state added for better UX.
+  -->
+  <script>
+    // --- Custom Alert Functions ---
+    const alertOverlay = document.getElementById('customAlertOverlay');
+    const alertMessage = document.getElementById('customAlertMessage');
+
+    function showCustomAlert(message) {
+      alertMessage.textContent = message;
+      alertOverlay.style.display = "flex";
+    }
+
+    function closeCustomAlert() {
+      alertOverlay.style.display = "none";
+    }
+
+    // --- Steganography Logic (from your request) ---
+    
+    function binaryToString(binary) {
+      const bytes = binary.match(/.{1,8}/g);
+      return bytes ? bytes.map(b => String.fromCharCode(parseInt(b, 2))).join('') : '';
+    }
+
+    function downloadFile(filename, data) {
+      const blob = new Blob([data]);
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(link.href); // Clean up
+    }
+
+    function extractHiddenData() {
+      const imageInput = document.getElementById('imageToExtract');
+      const key = document.getElementById('decryptionKey').value.trim();
+      const outputContainer = document.getElementById('outputContainer');
+      const outputText = document.getElementById('outputText');
+      const button = document.querySelector('.action-btn');
+
+      outputContainer.style.display = "none";
+      outputText.textContent = "";
+
+      if (!imageInput.files.length) {
+        showCustomAlert("Please upload a stego image first!"); // Replaced alert()
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "Processing...";
+
+      const img = new Image();
+      const reader = new FileReader();
+      
+      reader.onload = function(event) {
+        img.src = event.target.result;
+      }
+      reader.readAsDataURL(imageInput.files[0]);
+      
+      img.onload = function() {
+        try {
+          const canvas = document.getElementById('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          let binaryData = "";
+
+          for (let i = 0; i < imageData.data.length; i += 4) {
+            binaryData += (imageData.data[i] & 1);
+            binaryData += (imageData.data[i + 1] & 1);
+            binaryData += (imageData.data[i + 2] & 1);
+          }
+
+          const allData = binaryToString(binaryData);
+
+          const markerIndex = allData.indexOf("FILE:");
+          if (markerIndex !== -1) {
+            const metaEnd = allData.indexOf("|ENDMETA|");
+            const metadata = allData.substring(markerIndex + 5, metaEnd);
+            const [filename, fileSizeStr] = metadata.split('|');
+
+            const fileDataStart = metaEnd + 9;
+            const encryptedData = allData.substring(fileDataStart).replace(/\0/g, ""); // remove nulls
+
+            try {
+              let decryptedBase64;
+              if (key) {
+                const bytes = CryptoJS.AES.decrypt(encryptedData, key);
+                decryptedBase64 = bytes.toString(CryptoJS.enc.Utf8);
+              } else {
+                decryptedBase64 = encryptedData;
+              }
+
+              if (!decryptedBase64) {
+                 throw new Error("Decryption failed or produced empty data. Check key.");
+              }
+
+              const binaryStr = atob(decryptedBase64);
+              const byteArray = new Uint8Array(binaryStr.length);
+              for (let i = 0; i < binaryStr.length; i++) {
+                byteArray[i] = binaryStr.charCodeAt(i);
+              }
+
+              downloadFile(filename, byteArray);
+              showCustomAlert("✅ File successfully decrypted and downloaded!"); // Replaced alert()
+            } catch (e) {
+              console.error("Decryption failed:", e);
+              showCustomAlert("❌ Failed to decrypt or extract file. Key may be incorrect."); // Replaced alert()
+            }
+          } else {
+            // Text mode
+            let extractedText = allData.split('\0')[0];
+            let decryptedText = "";
+
+            try {
+              if (key && extractedText) {
+                const bytes = CryptoJS.AES.decrypt(extractedText, key);
+                decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+              }
+            } catch (e) {
+              console.warn("Text decryption failed:", e);
+              decryptedText = "";
+            }
+
+            outputContainer.style.display = "block";
+            if (decryptedText) {
+                outputText.textContent = decryptedText;
+            } else if (extractedText && !key) {
+                outputText.textContent = "Extracted (raw) data. Provide a key to decrypt:\n\n" + extractedText.substring(0, 200) + "...";
+            } else if (extractedText && key && !decryptedText) {
+                outputText.textContent = "❌ Decryption failed. Incorrect key or corrupt data.\n\nRaw data:\n" + extractedText.substring(0, 200) + "...";
+            } else {
+                outputText.textContent = "❌ No hidden text found.";
+            }
+          }
+        } catch (e) {
+            console.error("A critical error occurred:", e);
+            showCustomAlert("An unexpected error occurred: " + e.message);
+        } finally {
+            button.disabled = false;
+            button.textContent = "Extract & Decrypt";
+        }
+      };
+      
+      img.onerror = function() {
+        showCustomAlert("Error: Could not load the selected file. Please ensure it is a valid image.");
+        button.disabled = false;
+        button.textContent = "Extract & Decrypt";
+      }
+    }
+  </script>
+</body>
+</html>
+

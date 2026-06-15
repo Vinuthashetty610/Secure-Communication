@@ -1,0 +1,248 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - Secure Image</title>
+  <style>
+    /* --- Global Reset & Dark Theme --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #121212; /* Very dark grey (almost black) */
+      color: #e0e0e0; /* Light grey text for readability */
+      line-height: 1.6;
+    }
+
+    /* --- Navbar --- */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      background-color: #1e1e1e; /* Slightly lighter dark shade */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .navbar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #007bff; /* Keep the blue for accent */
+      text-decoration: none;
+    }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: transparent;
+      color: #007bff;
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background-color: #007bff;
+      color: #ffffff;
+    }
+
+    /* --- Hero Section --- */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 5%;
+      gap: 2rem;
+      background-color: #1a1a1a; /* A slightly different dark shade */
+      flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    }
+
+    .hero-text {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .hero-text h1 {
+      font-size: 2.5rem;
+      color: #ffffff;
+      margin-bottom: 1rem;
+    }
+
+    .hero-text p {
+      font-size: 1.1rem;
+      color: #b0b0b0; /* Muted text */
+    }
+
+    .hero-placeholder {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 300px;
+    min-height: 250px;
+    background-color: #2a2a2a;
+    border: 2px dashed #555;
+    border-radius: 8px;
+    color: #777;
+    background-image: url('secure.jpg'); /* <-- Add this line */
+    background-size: cover; /* or contain */
+    background-position: center;
+    }
+
+    /* --- Actions Section --- */
+    .actions {
+      padding: 3rem 5%;
+      text-align: center;
+    }
+
+    .actions h2 {
+      font-size: 2rem;
+      margin-bottom: 2.5rem;
+      color: #ffffff;
+    }
+
+    .actions-container {
+      display: flex;
+      justify-content: center;
+      align-items: stretch; /* Makes cards same height */
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .action-card {
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      padding: 2rem;
+      width: 300px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      text-align: left;
+      display: flex;
+      flex-direction: column; /* Allows button to be at the bottom */
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .action-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0, 123, 255, 0.2);
+    }
+
+    .action-card h3 {
+      font-size: 1.25rem;
+      color: #007bff;
+      margin-bottom: 0.75rem;
+    }
+
+    .action-card p {
+      font-size: 1rem;
+      color: #b0b0b0;
+      flex-grow: 1; /* Pushes the button to the bottom */
+      margin-bottom: 1.5rem;
+    }
+
+    /* --- Button Styling --- */
+    .action-btn {
+      padding: 15px 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%; /* Make button fill the card width */
+      text-align: center;
+      text-decoration: none;
+      display: inline-block; /* For the <a> tag */
+      transition: background-color 0.3s ease;
+    }
+
+    .action-btn:hover {
+      background-color: #0056b3;
+    }
+
+    /* --- Footer --- */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      margin-top: 2rem;
+      background-color: #1e1e1e;
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="#" class="logo">🔐 Secure Image</a>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Welcome!</h1>
+      <p>
+        This is your central dashboard for the <strong>Secure Image</strong> tool. 
+        Here you can use digital steganography to hide sensitive data or entire files 
+        inside an image, making them invisible to the naked eye.
+      </p>
+    </div>
+    <div class="hero-placeholder">
+      
+    </div>
+  </section>
+
+  <section class="actions">
+    <h2>Select an Action</h2>
+    <div class="actions-container">
+      
+      <div class="action-card">
+        <h3>🔐 Hide Text in Image</h3>
+        <p>
+          Embed a secret text message directly into the pixels of an image. 
+          The output image will look identical to the original.
+        </p>
+        <a href="encrypt.html" class="action-btn">Encrypt Text</a>
+      </div>
+
+      <div class="action-card">
+        <h3>🕵️ Reveal Hidden Text</h3>
+        <p>
+          Extract a secret text message from an image that has been
+          encoded using this tool.
+        </p>
+        <a href="decrypt.html" class="action-btn">Decrypt Text</a>
+      </div>
+
+      <div class="action-card">
+        <h3>📁 Hide File in Image</h3>
+        <p>
+          Conceal an entire file (e.g., a .txt, .pdf, or .zip) within a 
+          cover image. A powerful way to transport sensitive files.
+        </p>
+        <a href="file_encrypt.html" class="action-btn">Encrypt File</a>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Secure Image. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function logout() {
+      // Redirect user to login page
+      window.location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>

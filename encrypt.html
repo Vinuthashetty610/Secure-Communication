@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔐 Encrypt & Hide Message</title>
+  <style>
+    /* --- Global Reset & Dark Theme --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #121212; /* Very dark grey (almost black) */
+      color: #e0e0e0; /* Light grey text */
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- Navbar --- */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      background-color: #1e1e1e; /* Slightly lighter dark shade */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      width: 100%;
+    }
+
+    .navbar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #007bff; /* Accent color */
+      text-decoration: none;
+    }
+
+    .nav-btn {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: transparent;
+      color: #007bff;
+      border: 1px solid #007bff;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      background-color: #007bff;
+      color: #ffffff;
+    }
+
+    /* --- Main Content Container --- */
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      flex-grow: 1;
+      width: 100%;
+    }
+
+    .encrypt-card {
+      background-color: #1e1e1e; /* Card background */
+      border-radius: 8px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .encrypt-card h2 {
+      text-align: center;
+      color: #007bff;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+    }
+
+    /* --- Form Inputs & Button --- */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      color: #b0b0b0;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      background-color: #2a2a2a;
+      border: 1px solid #444;
+      border-radius: 5px;
+      color: #e0e0e0;
+      transition: border-color 0.3s ease;
+    }
+    
+    .form-input[type="text"],
+    .form-input[type="password"] {
+      padding: 0.75rem 1rem;
+    }
+
+    .form-input::placeholder {
+      color: #777;
+    }
+    
+    /* Style file input */
+    .form-input[type="file"] {
+      padding: 0.6rem 1rem;
+      color: #999;
+    }
+    
+    .form-input[type="file"]::file-selector-button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .form-input[type="file"]::file-selector-button:hover {
+      background-color: #0056b3;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: bold;
+      /* Blue color for "Encrypt/Hide" */
+      background-color: #007bff; 
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .action-btn:hover {
+      background-color: #0056b3;
+    }
+
+    /* --- Status Message --- */
+    #status {
+      margin-top: 1.5rem;
+      text-align: center;
+      color: #28a745; /* Green for success */
+      font-weight: bold;
+      min-height: 1.2em;
+    }
+
+    /* --- Footer --- */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background-color: #1e1e1e;
+      color: #888;
+      font-size: 0.9rem;
+      width: 100%;
+    }
+
+    /* --- Custom Alert --- */
+    .custom-alert-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none; /* Hidden by default */
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .custom-alert-box {
+      background: #1e1e1e;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .custom-alert-box p {
+      color: #e0e0e0;
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .custom-alert-btn {
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .custom-alert-btn:hover {
+      background-color: #0056b3;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- --- Navbar --- -->
+  <nav class="navbar">
+    <a href="dashboard.html" class="logo">🔐 Secure Image</a>
+    <a href="dashboard.html" class="nav-btn">Back to Dashboard</a>
+  </nav>
+
+  <!-- --- Main Content --- -->
+  <div class="container">
+    <div class="encrypt-card">
+      <h2>🔐 Hide Encrypted Message</h2>
+
+      <div class="form-group">
+        <label for="imageInput">1. Upload Cover Image</label>
+        <input type="file" id="imageInput" class="form-input" accept="image/*">
+      </div>
+
+      <div class="form-group">
+        <label for="secretMessage">2. Enter Secret Message</label>
+        <input type="text" id="secretMessage" class="form-input" placeholder="Enter secret message">
+      </div>
+
+      <div class="form-group">
+        <label for="encryptionKey">3. Encryption Key</label>
+        <input type="text" id="encryptionKey" class="form-input" placeholder="Enter secret key">
+      </div>
+
+      <canvas id="canvas" style="display:none;"></canvas>
+      <button onclick="hideEncryptedMessage()" class="action-btn">Hide Message & Download Image</button>
+      <p id="status"></p>
+    </div>
+  </div>
+
+  <!-- --- Footer --- -->
+  <footer>
+    <p>&copy; 2025 Secure Image. All rights reserved.</p>
+  </footer>
+
+  <!-- --- Custom Alert Box --- -->
+  <div class="custom-alert-overlay" id="customAlertOverlay">
+    <div class="custom-alert-box">
+      <p id="customAlertMessage"></p>
+      <button class="custom-alert-btn" onclick="closeCustomAlert()">OK</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script>
+    // --- Custom Alert Functions ---
+    const alertOverlay = document.getElementById('customAlertOverlay');
+    const alertMessage = document.getElementById('customAlertMessage');
+
+    function showCustomAlert(message) {
+      alertMessage.textContent = message;
+      alertOverlay.style.display = "flex";
+    }
+
+    function closeCustomAlert() {
+      alertOverlay.style.display = "none";
+    }
+
+    // --- Steganography Logic ---
+
+    // Convert string to binary
+    function stringToBinary(str) {
+      return str.split("").map(c => c.charCodeAt(0).toString(2).padStart(8, "0")).join("");
+    }
+
+    function hideEncryptedMessage() {
+      const imageInput = document.getElementById('imageInput');
+      const message = document.getElementById('secretMessage').value;
+      const key = document.getElementById('encryptionKey').value;
+      const status = document.getElementById('status');
+      
+      status.textContent = "";
+
+      if (!imageInput.files.length) {
+        showCustomAlert("Please upload a cover image!");
+        return;
+      }
+      if (!message) {
+        showCustomAlert("Please enter a secret message!");
+        return;
+      }
+      if (!key) {
+        showCustomAlert("Please enter an encryption key!");
+        return;
+      }
+      
+      const img = new Image();
+      const reader = new FileReader();
+      
+      reader.onload = function(event) {
+        img.src = event.target.result;
+      }
+      reader.readAsDataURL(imageInput.files[0]);
+
+      img.onload = function() {
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        // Encrypt the message
+        // .toString() creates a Base64 string, which is what the decryptor expects
+        const encrypted = CryptoJS.AES.encrypt(message, key).toString();
+        
+        // Add a null terminator to mark the end of the text
+        const dataToHide = encrypted + '\0'; 
+        const binaryData = stringToBinary(dataToHide);
+
+        let imageData;
+        try {
+          imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        } catch (e) {
+           showCustomAlert("Error: Could not process image. It may be from a different origin or corrupted.");
+           return;
+        }
+
+        const totalCapacity = (imageData.data.length / 4) * 3; // 3 bits per pixel
+
+        if (binaryData.length > totalCapacity) {
+          showCustomAlert("Message is too large to hide in this image. Please use a larger image or shorter message.");
+          return;
+        }
+
+        // Embed data into image pixels
+        let dataIndex = 0;
+        for (let i = 0; i < imageData.data.length && dataIndex < binaryData.length; i += 4) {
+          // R channel
+          imageData.data[i] = (imageData.data[i] & 0xFE) | parseInt(binaryData[dataIndex++], 10);
+          // G channel
+          if (dataIndex < binaryData.length)
+            imageData.data[i + 1] = (imageData.data[i + 1] & 0xFE) | parseInt(binaryData[dataIndex++], 10);
+          // B channel
+          if (dataIndex < binaryData.length)
+            imageData.data[i + 2] = (imageData.data[i + 2] & 0xFE) | parseInt(binaryData[dataIndex++], 10);
+          // Alpha channel (i + 3) is skipped
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        const stegoURL = canvas.toDataURL("image/png");
+
+        const link = document.createElement("a");
+        link.href = stegoURL;
+        link.download = "stego_" + imageInput.files[0].name.replace(/(\.[\w\d_-]+)$/i, '.png');
+        link.click();
+        URL.revokeObjectURL(link.href);
+
+        status.textContent = "✅ Message successfully hidden in image!";
+      };
+      
+      img.onerror = function() {
+        showCustomAlert("Error: Could not load the cover image. Please ensure it is a valid image file.");
+      }
+    }
+  </script>
+</body>
+</html>
